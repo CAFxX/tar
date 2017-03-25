@@ -503,6 +503,7 @@ sparse_dump_file (int fd, struct tar_stat_info *st)
 	{
 	  size_t i;
 
+	  prefetch(fd, 0, file.stat_info->stat.st_size);
 	  mv_begin_write (file.stat_info->file_name,
 		          file.stat_info->stat.st_size,
 		          file.stat_info->archive_file_size - file.dumped_size);

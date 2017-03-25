@@ -1064,6 +1064,7 @@ dump_regular_file (int fd, struct tar_stat_info *st)
 
   finish_header (st, blk, block_ordinal);
 
+  prefetch(fd, 0, st->stat.st_size);
   mv_begin_write (st->file_name, st->stat.st_size, st->stat.st_size);
   while (size_left > 0)
     {

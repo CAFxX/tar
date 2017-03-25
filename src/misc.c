@@ -24,6 +24,7 @@
 #include <xgetcwd.h>
 #include <unlinkdir.h>
 #include <utimens.h>
+#include <fcntl.h>
 
 #ifndef DOUBLE_SLASH_IS_DISTINCT_ROOT
 # define DOUBLE_SLASH_IS_DISTINCT_ROOT 0
@@ -1247,4 +1248,17 @@ tar_savedir (const char *name, int must_exist)
     savedir_error (name);
 
   return ret;
+}
+
+/* Opportunistally signal to the OS that we are soon going to sequentially read
+   once a byte range from fd. If not supported or signaling to the OS fails this
+   function should then behave as a no-op.
+*/
+void
+prefetch(int fd, off_t offset, size_t len)
+{
+#if _XOPEN_SOURCE >= 600 || _POSIX_C_SOURCE >= 200112L
+  posix_fadvise(fd, offset, len, POSIX_FADV_SEQUENTIAL);
+  posix_fadvise(fd, offset, len, POSIX_FADV_WILLNEED);
+#endif
 }
